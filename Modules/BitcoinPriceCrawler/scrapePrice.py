@@ -38,8 +38,9 @@ else:
             filewriter.writerow([myJson['time']['updatedISO'][0:10], myJson['bpi']['USD']['rate_float']])
         elif argsSize() == 3:
             priceList = myJson['bpi']
-            print(priceList)
             for item in sorted(priceList.items()):
                 filewriter.writerow([item[0], item[1]])
+        print('Data saved to: ' + filename)
+
 
 
