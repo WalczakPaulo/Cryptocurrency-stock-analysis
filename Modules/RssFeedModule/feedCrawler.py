@@ -1,12 +1,34 @@
 import requests
+import sys
 from bs4 import BeautifulSoup
-from constants import COIN_TELEGRAPH_URL, LATEST_NEWS_FILENAME, TO_BE_PROCESSED_NEWS
+from constants import \
+    ERROR, COIN_TELEGRAPH_URL, LATEST_NEWS_FILENAME, TO_BE_PROCESSED_NEWS, WELCOME_INFO, \
+    HISTORIC_FEED_URL, INCORRECT_ARGUMENT, HISTORIC_FEED_FILENAME, WELCOME_INFO_HISTORIC
 from email.utils import parsedate_tz
 import csv
 import pandas as pd
 import re
 
-url = COIN_TELEGRAPH_URL
+if len(sys.argv) != 2:
+    print(ERROR)
+    exit()
+
+url = ''
+filename = ''
+newNewsFilename = ''
+if sys.argv[1] == 'historic':
+    url = HISTORIC_FEED_URL
+    filename = HISTORIC_FEED_FILENAME
+    print(WELCOME_INFO_HISTORIC)
+elif sys.argv[1] == 'current':
+    url = COIN_TELEGRAPH_URL
+    filename = LATEST_NEWS_FILENAME
+    newNewsFilename = TO_BE_PROCESSED_NEWS
+    print(WELCOME_INFO)
+else:
+    print(INCORRECT_ARGUMENT)
+    exit()
+
 resp = requests.get(url)
 soup = BeautifulSoup(resp.content, features='xml')
 items = soup.findAll('item')
@@ -19,8 +41,6 @@ for item in items:
     description = item.description.text.replace('\'', '')
     cleantext = re.sub(cleanr, '', description).replace('"', '').replace('\n', ' ')
     news_item['description'] = '\"' + cleantext + '\"'
-    news_item['link'] = item.link.text
-    news_item['image'] = item.content['url']
     date = parsedate_tz(item.pubDate.text)
     news_item['pubDate'] = str(date[0]) + '-' + str(date[1]) + '-' + str(date[2])
     news_items.append(news_item)
@@ -33,7 +53,7 @@ except:
     pass
 print(len(titles))
 to_be_processed_news = []
-with open(LATEST_NEWS_FILENAME, 'a') as csvfile:
+with open(filename, 'a') as csvfile:
     filewriter = csv.writer(csvfile, delimiter=',')
     if len(titles) == 0:
         filewriter.writerow(['date', 'title', 'description'])
@@ -41,8 +61,9 @@ with open(LATEST_NEWS_FILENAME, 'a') as csvfile:
         if len(titles) == 0 or item['title'] not in titles:
             filewriter.writerow([item['pubDate'], item['title'], item['description']])
             to_be_processed_news.append(item)
-
-with open(TO_BE_PROCESSED_NEWS, 'w') as csvfile:
+if sys.argv[1] == 'historic':
+    exit()
+with open(newNewsFilename, 'w') as csvfile:
     filewriter = csv.writer(csvfile, delimiter=',')
     filewriter.writerow(['date', 'title', 'description'])
     for item in to_be_processed_news:
