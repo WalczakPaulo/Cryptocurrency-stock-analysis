@@ -17,7 +17,7 @@ for item in items:
     news_item = {}
     news_item['title'] = item.title.text
     description = item.description.text
-    cleantext = re.sub(cleanr, '', description)
+    cleantext = re.sub(cleanr, '', description).replace('"', '')
     news_item['description'] = cleantext
     news_item['link'] = item.link.text
     news_item['image'] = item.content['url']
