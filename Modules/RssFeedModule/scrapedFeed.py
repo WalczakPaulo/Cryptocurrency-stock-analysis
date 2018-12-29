@@ -15,10 +15,10 @@ cleanr = re.compile('<.*?>')
 
 for item in items:
     news_item = {}
-    news_item['title'] = item.title.text
-    description = item.description.text
-    cleantext = re.sub(cleanr, '', description).replace('"', '')
-    news_item['description'] = cleantext
+    news_item['title'] = '\"' + item.title.text + '\"'
+    description = item.description.text.replace('\'', '')
+    cleantext = re.sub(cleanr, '', description).replace('"', '').replace('\n', ' ')
+    news_item['description'] = '\"' + cleantext + '\"'
     news_item['link'] = item.link.text
     news_item['image'] = item.content['url']
     date = parsedate_tz(item.pubDate.text)
@@ -34,8 +34,7 @@ except:
 print(len(titles))
 to_be_processed_news = []
 with open(LATEST_NEWS_FILENAME, 'a') as csvfile:
-    filewriter = csv.writer(csvfile, delimiter=',',
-                            quotechar='|', quoting=csv.QUOTE_MINIMAL)
+    filewriter = csv.writer(csvfile, delimiter=',')
     if len(titles) == 0:
         filewriter.writerow(['date', 'title', 'description'])
     for item in news_items:
@@ -44,8 +43,7 @@ with open(LATEST_NEWS_FILENAME, 'a') as csvfile:
             to_be_processed_news.append(item)
 
 with open(TO_BE_PROCESSED_NEWS, 'w') as csvfile:
-    filewriter = csv.writer(csvfile, delimiter=',',
-                            quotechar='|', quoting=csv.QUOTE_MINIMAL)
+    filewriter = csv.writer(csvfile, delimiter=',')
     filewriter.writerow(['date', 'title', 'description'])
     for item in to_be_processed_news:
         filewriter.writerow([item['pubDate'], item['title'], item['description']])
