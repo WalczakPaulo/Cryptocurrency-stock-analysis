@@ -13,14 +13,15 @@ if len(sys.argv) != 2:
     print(ERROR)
     exit()
 
+crawlerType = sys.argv[1]
 url = ''
 filename = ''
 newNewsFilename = ''
-if sys.argv[1] == 'historic':
+if crawlerType == 'historic':
     url = HISTORIC_FEED_URL
     filename = HISTORIC_FEED_FILENAME
     print(WELCOME_INFO_HISTORIC)
-elif sys.argv[1] == 'current':
+elif crawlerType == 'current':
     url = COIN_TELEGRAPH_URL
     filename = LATEST_NEWS_FILENAME
     newNewsFilename = TO_BE_PROCESSED_NEWS
@@ -47,11 +48,16 @@ for item in items:
 
 titles = []
 try:
-    latestNewsCsv = pd.read_csv(LATEST_NEWS_FILENAME,  error_bad_lines=False)
+    dataFilename = ''
+    if(crawlerType == 'current'):
+        dataFilename = LATEST_NEWS_FILENAME
+    else:
+        dataFilename = HISTORIC_FEED_FILENAME
+    latestNewsCsv = pd.read_csv(dataFilename,  error_bad_lines=False)
     titles = latestNewsCsv['title'].tolist()
 except:
     pass
-print(len(titles))
+
 to_be_processed_news = []
 with open(filename, 'a') as csvfile:
     filewriter = csv.writer(csvfile, delimiter=',')
@@ -61,8 +67,10 @@ with open(filename, 'a') as csvfile:
         if len(titles) == 0 or item['title'] not in titles:
             filewriter.writerow([item['pubDate'], item['title'], item['description']])
             to_be_processed_news.append(item)
-if sys.argv[1] == 'historic':
+
+if crawlerType == 'historic':
     exit()
+
 with open(newNewsFilename, 'w') as csvfile:
     filewriter = csv.writer(csvfile, delimiter=',')
     filewriter.writerow(['date', 'title', 'description'])
