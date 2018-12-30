@@ -43,7 +43,17 @@ for item in items:
     cleantext = re.sub(cleanr, '', description).replace('"', '').replace('\n', ' ')
     news_item['description'] = '\"' + cleantext + '\"'
     date = parsedate_tz(item.pubDate.text)
-    news_item['pubDate'] = str(date[0]) + '-' + str(date[1]) + '-' + str(date[2])
+    month = ''
+    day = ''
+    if date[1] < 10:
+        month = '0' + str(date[1])
+    else:
+        month = str(date[1])
+    if date[2] < 10:
+        day = '0' + str(date[2])
+    else:
+        day = str(date[2])
+    news_item['pubDate'] = str(date[0]) + '-' + month + '-' + day
     news_items.append(news_item)
 
 titles = []
@@ -53,8 +63,8 @@ try:
         dataFilename = LATEST_NEWS_FILENAME
     else:
         dataFilename = HISTORIC_FEED_FILENAME
-    latestNewsCsv = pd.read_csv(dataFilename,  error_bad_lines=False)
-    titles = latestNewsCsv['title'].tolist()
+    csvfile = pd.read_csv(dataFilename,  error_bad_lines=False)
+    titles = csvfile['title'].tolist()
 except:
     pass
 
