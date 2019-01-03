@@ -86,10 +86,3 @@ with open(newNewsFilename, 'w') as csvfile:
     filewriter.writerow(['date', 'title', 'description'])
     for item in to_be_processed_news:
         filewriter.writerow([item['pubDate'], item['title'], item['description']])
-
-
-
-
-
-
-

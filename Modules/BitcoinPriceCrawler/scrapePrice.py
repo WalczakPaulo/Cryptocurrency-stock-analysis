@@ -28,7 +28,7 @@ else:
     if argsSize() == 1:
         filename = './data/BitcoinPrice' + datetime.datetime.now().strftime('%m-%d-%Y') + '.csv'
     else:
-        filename = './data/BitcoinPrice_from_' + sys.argv[1] + '_to_' +sys.argv[2] + '.csv'
+        filename = './data/BitcoinPrice_from_' + sys.argv[1] + '_to_' + sys.argv[2] + '.csv'
     myJson = json.loads(response.text)
     with open(filename, 'w') as csvfile:
         filewriter = csv.writer(csvfile, delimiter=',',
@@ -41,6 +41,3 @@ else:
             for item in sorted(priceList.items()):
                 filewriter.writerow([item[0], item[1]])
         print('Data saved to: ' + filename)
-
-
-
