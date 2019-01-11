@@ -28,16 +28,13 @@ def build_model(path_to_data='./data/ProcessedData.csv',
                 is_model_saved=True,
                 path_to_model_dir='./model/nlp.model',
                 test_size=0.2,
-                split_data_random_state=None,
-                seed=None,
-                **params):
+                split_data_random_state=None):
 
     train_tagged, test_tagged = read_and_preprocess(path=path_to_data, test_size=test_size, is_training=True,
                                                     random_state=split_data_random_state)
-
     train_messages = train_tagged.values
-    model_PVDBOW = Doc2Vec(train_messages, dm=0, vector_size=300, window=10, min_count=1, epochs=100, workers=1,
-                       alpha=0.025, min_alpha=0.01, seed=seed)
+    model_PVDBOW = Doc2Vec(train_messages, dm=0, vector_size=300, window=10, min_count=1, epochs=100, alpha=0.025,
+                           min_alpha=0.01)
     Xx, yy = infered_vectors(model_PVDBOW, train_messages)
     test_messages = test_tagged.values
     Xt, yt = infered_vectors(model_PVDBOW, test_messages)

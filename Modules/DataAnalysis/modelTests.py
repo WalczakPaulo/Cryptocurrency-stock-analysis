@@ -4,14 +4,12 @@ from sklearn.metrics import accuracy_score
 from sklearn.metrics import f1_score
 from NLPModel import build_model
 
-seed = 1648
+Xx, yy, Xt, yt, model_PVDBOW = build_model()
 
-Xx, yy, Xt, yt, model_PVDBOW = build_model(seed=seed)
-
-logistic_regression = LogisticRegression(random_state=seed).fit(Xx, yy)
+logistic_regression = LogisticRegression().fit(Xx, yy)
 y_pred_lr = logistic_regression.predict(Xt)
 
-svm_model = svm.SVC(kernel='linear', random_state=seed).fit(Xx, yy)
+svm_model = svm.SVC(kernel='linear').fit(Xx, yy)
 y_pred_svm = svm_model.predict(Xt)
 
 print('logistic regression accuracy = {} | svm accuracy = {}\n'

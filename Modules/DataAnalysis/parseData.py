@@ -20,7 +20,7 @@ parser.add_argument(
 )
 parser.add_argument(
     '--threshold',
-    help='The absolute value of the price difference for which we recognize that its change is significant',
+    help='The absolute value of the percentage change for which we assume that it is significant',
     default=0
 )
 args = parser.parse_args()
@@ -31,9 +31,8 @@ threshold = arguments['threshold']
 path_to_messages = arguments['path_to_messages']
 
 prices = pd.read_csv(path_to_prices)
-price_diffs = prices['price'].diff()[1:]
+price_diffs = 100*(prices['price'].diff()[1:].reset_index(drop=True) / prices['price'][:-1].reset_index(drop=True))
 categories = price_diffs.map(lambda diff: 0 if (diff <= -threshold) else (1 if (diff >= threshold) else 2))
-categories = categories.reset_index(drop=True)
 prices.drop(['price'], axis=1, inplace=True)
 prices = prices[:-1]
 prices['class'] = categories
