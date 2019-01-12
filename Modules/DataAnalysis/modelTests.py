@@ -4,7 +4,8 @@ from sklearn.metrics import accuracy_score
 from sklearn.metrics import f1_score
 from NLPModel import build_model
 
-Xx, yy, Xt, yt, model_PVDBOW = build_model()
+Xx, yy, Xt, yt, model_PVDBOW = build_model(vector_size=300, window=10, min_count=1, epochs=100, alpha=0.025,
+                           min_alpha=0.01)
 
 logistic_regression = LogisticRegression().fit(Xx, yy)
 y_pred_lr = logistic_regression.predict(Xt)
